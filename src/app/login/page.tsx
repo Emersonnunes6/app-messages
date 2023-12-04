@@ -2,10 +2,11 @@
 
 import { VStack, ButtonGroup, FormControl, FormLabel, Button, FormErrorMessage, Input, Heading } from '@chakra-ui/react'
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as Yup from 'yup';
-import { schemaYup } from './schemaYup';
+// @ts-ignore 
+import { formSchemaLogin } from '@app-messages/common';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
+import axiosInstance from '@/services/axios-instance';
 
 interface Inputs {
     username: string;
@@ -14,16 +15,20 @@ interface Inputs {
 
 const Login = () => {
     const { register, handleSubmit, formState, reset } = useForm<Inputs>({
-        resolver: yupResolver(schemaYup),
+        resolver: yupResolver(formSchemaLogin),
     });
     const { errors } = formState;
 
-    const router = useRouter()
+    const router = useRouter();
 
     const onSubmit = (data: any) => {
-        reset();
-        console.log(data);
-        console.log(formState.touchedFields)
+        axiosInstance.post('/auth/login', data)
+        .then((res) => {
+            reset();
+            console.log(res)
+        }).catch((err) => {
+            console.log(err)
+        })
     }
 
     return (

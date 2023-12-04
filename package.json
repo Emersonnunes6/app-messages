@@ -1,5 +1,5 @@
 {
-  "name": "app-messages",
+  "name": "@app-messages/client",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -20,7 +20,7 @@
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.48.2",
-    "yup": "^1.3.2"
+    "@app-messages/common": "1.0.0"
   },
   "devDependencies": {
     "@types/node": "^20",
