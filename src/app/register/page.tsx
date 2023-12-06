@@ -1,6 +1,6 @@
 'use client'
 
-import { VStack, ButtonGroup, FormControl, FormLabel, Button, FormErrorMessage, Input, Heading } from '@chakra-ui/react'
+import { VStack, ButtonGroup, FormControl, FormLabel, Button, FormErrorMessage, Input, Heading, useToast } from '@chakra-ui/react'
 import { yupResolver } from '@hookform/resolvers/yup';
 // @ts-ignore
 import { formSchemaRegister } from '@app-messages/common';
@@ -16,6 +16,7 @@ interface Inputs {
 };
 
 const SignUp = () => {
+  const toast = useToast()
   const { register, handleSubmit, formState, reset } = useForm<Inputs>({
     resolver: yupResolver(formSchemaRegister),
   });
@@ -24,7 +25,6 @@ const SignUp = () => {
   const router = useRouter()
 
   const onSubmit = (data: any) => {
-    reset();
 
     const body = {
       username: data.username,
@@ -32,11 +32,18 @@ const SignUp = () => {
       password: data.password
     }
 
-    axiosInstance.post('/auth/registro', body)
+    axiosInstance.post('/auth/register', body)
       .then((res) => {
-        console.log(res)
+        reset();
+        router.push('/home')
       }).catch((err) => {
-        console.log(err)
+        toast({
+          title: 'Erro',
+          description: err.response.statusText,
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+        });
       })
   }
 

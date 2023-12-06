@@ -1,12 +1,14 @@
 'use client'
 
-import { VStack, ButtonGroup, FormControl, FormLabel, Button, FormErrorMessage, Input, Heading } from '@chakra-ui/react'
+import { VStack, ButtonGroup, FormControl, FormLabel, Button, FormErrorMessage, Input, Heading, useToast } from '@chakra-ui/react'
 import { yupResolver } from '@hookform/resolvers/yup';
 // @ts-ignore 
 import { formSchemaLogin } from '@app-messages/common';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import axiosInstance from '@/services/axios-instance';
+import { useContext, useEffect } from 'react';
+import { AccountContext } from './AccountContext';
 
 interface Inputs {
     username: string;
@@ -14,6 +16,8 @@ interface Inputs {
 }
 
 const Login = () => {
+    const { setUser } = useContext(AccountContext);
+    const toast = useToast();
     const { register, handleSubmit, formState, reset } = useForm<Inputs>({
         resolver: yupResolver(formSchemaLogin),
     });
@@ -23,12 +27,19 @@ const Login = () => {
 
     const onSubmit = (data: any) => {
         axiosInstance.post('/auth/login', data)
-        .then((res) => {
-            reset();
-            console.log(res)
-        }).catch((err) => {
-            console.log(err)
-        })
+            .then((res) => {
+                reset();
+                router.push('/home');
+                setUser({...res.data});
+            }).catch((err) => {
+                toast({
+                    title: 'Erro',
+                    description: err.response.statusText,
+                    status: 'error',
+                    duration: 9000,
+                    isClosable: true,
+                });
+            })
     }
 
     return (
